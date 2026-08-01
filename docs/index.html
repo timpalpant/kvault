@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KVault — a native Bitwarden client for Plasma</title>
+<meta name="description" content="KVault is an unofficial native Kirigami client for Bitwarden vaults. No Electron, no browser engine, no Node runtime.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+
+<meta property="og:title" content="KVault">
+<meta property="og:description" content="An unofficial native Kirigami client for Bitwarden vaults. No Electron.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://timpalpant.github.io/kvault/">
+<meta property="og:image" content="https://timpalpant.github.io/kvault/icon.svg">
+
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #fbfbfc;
+    --surface: #ffffff;
+    --border: #e2e4e8;
+    --text: #1b1d21;
+    --muted: #5c6370;
+    --accent: #1d76a8;
+    --accent-hover: #3daee9;
+    --code-bg: #f2f3f5;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16181c;
+      --surface: #1d2025;
+      --border: #2c3038;
+      --text: #eceff4;
+      --muted: #9aa1ad;
+      --accent: #3daee9;
+      --accent-hover: #6dc7f5;
+      --code-bg: #22262c;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---- hero ---- */
+  header { padding: 72px 0 56px; text-align: center; }
+  header img { width: 112px; height: 112px; }
+  h1 {
+    margin: 20px 0 8px;
+    font-size: 2.75rem;
+    letter-spacing: -0.02em;
+  }
+  .tagline { margin: 0 auto; max-width: 38ch; color: var(--muted); font-size: 1.15rem; }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .badges img { width: auto; height: 20px; }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+  }
+  .btn {
+    display: inline-block;
+    padding: 11px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 600;
+    transition: border-color .15s, transform .15s;
+  }
+  .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  /* ---- sections ---- */
+  section { padding: 40px 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 1.4rem; margin: 0 0 20px; letter-spacing: -0.01em; }
+  h3 { font-size: 1rem; margin: 24px 0 8px; }
+
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .features li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .features strong { display: block; margin-bottom: 4px; }
+  .features span { color: var(--muted); font-size: .95rem; }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: .9rem;
+    line-height: 1.5;
+  }
+  code { font-family: ui-monospace, "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+  p code { background: var(--code-bg); padding: 2px 6px; border-radius: 4px; font-size: .9em; }
+
+  a { color: var(--accent); }
+
+  .note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: var(--muted);
+    font-size: .95rem;
+  }
+
+  ul.plain { padding-left: 20px; color: var(--muted); }
+  ul.plain li { margin: 6px 0; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0 56px;
+    color: var(--muted);
+    font-size: .9rem;
+    text-align: center;
+  }
+  footer p { margin: 6px 0; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <img src="icon.svg" alt="">
+    <h1>KVault</h1>
+    <p class="tagline">An unofficial native Kirigami client for Bitwarden vaults — for people who would rather not run an Electron app to look at a password.</p>
+
+    <div class="badges">
+      <a href="https://github.com/timpalpant/kvault/actions/workflows/ci.yml"><img
+        src="https://img.shields.io/github/actions/workflow/status/timpalpant/kvault/ci.yml?branch=master&amp;label=CI&amp;logo=github"
+        alt="CI status"></a>
+      <a href="https://github.com/timpalpant/kvault/releases"><img
+        src="https://img.shields.io/github/v/release/timpalpant/kvault?include_prereleases&amp;label=release&amp;logo=github"
+        alt="Latest release"></a>
+      <a href="https://github.com/timpalpant/kvault/blob/master/LICENSE"><img
+        src="https://img.shields.io/badge/licence-GPL--3.0--or--later-blue"
+        alt="Licence"></a>
+    </div>
+
+    <div class="actions">
+      <a class="btn primary" href="https://github.com/timpalpant/kvault/releases">Download the latest release</a>
+      <a class="btn" href="https://github.com/timpalpant/kvault">Source on GitHub</a>
+    </div>
+  </header>
+
+  <!--
+    A screenshot belongs here. None is included yet: the captures taken during
+    development show real account data. Drop a sanitised image into
+    docs/screenshots/ and reference it from this spot.
+  -->
+
+
+  <section>
+    <h2>What it does</h2>
+    <ul class="features">
+      <li>
+        <strong>Every item type</strong>
+        <span>Logins, secure notes, cards, identities and SSH keys, including custom fields, multiple URIs and password history.</span>
+      </li>
+      <li>
+        <strong>Full read and write</strong>
+        <span>Create, edit, trash, restore and delete permanently, and organise items into folders.</span>
+      </li>
+      <li>
+        <strong>One-time passwords</strong>
+        <span>Live TOTP codes with a countdown ring — bare base32 secrets, <code>otpauth://</code> URIs and Steam Guard.</span>
+      </li>
+      <li>
+        <strong>Local cryptography</strong>
+        <span>The Bitwarden key schedule implemented directly against OpenSSL and libargon2. No browser engine, no JavaScript runtime.</span>
+      </li>
+      <li>
+        <strong>Works offline</strong>
+        <span>The encrypted vault is cached on disk, so it stays readable and searchable with no network. Locking discards the keys.</span>
+      </li>
+      <li>
+        <strong>Generator</strong>
+        <span>Passwords with configurable character classes and minimums, or passphrases from the EFF long wordlist.</span>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Getting started</h2>
+
+    <h3>Flatpak</h3>
+    <p>
+      Download <code>kvault.flatpak</code> from the
+      <a href="https://github.com/timpalpant/kvault/releases">latest release</a>,
+      then:
+    </p>
+<pre><code>flatpak install --user kvault.flatpak
+flatpak run io.github.timpalpant.kvault</code></pre>
+
+    <h3>Arch Linux</h3>
+<pre><code>paru -S kvault        # tagged releases
+paru -S kvault-git    # the default branch</code></pre>
+
+    <h3>From source</h3>
+<pre><code>git clone https://github.com/timpalpant/kvault.git
+cd kvault
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/bin/kvault</code></pre>
+
+    <p>
+      You will need Qt&nbsp;6.8+, KDE Frameworks&nbsp;6, qtkeychain, OpenSSL&nbsp;3
+      and libargon2. The full list is in the
+      <a href="https://github.com/timpalpant/kvault#building">README</a>.
+      <code>extra-cmake-modules</code> is deliberately not required.
+    </p>
+  </section>
+
+  <section>
+    <h2>How your vault stays yours</h2>
+    <ul class="plain">
+      <li>The master password is never written to disk, and is wiped from
+      memory as soon as the keys are derived from it.</li>
+      <li>Key material lives in a buffer with a cleansing allocator, so growing
+      or freeing it leaves no copies on the heap.</li>
+      <li>The on-disk cache is the server's sync payload exactly as received —
+      still encrypted. Locking discards the keys.</li>
+      <li>Session tokens go to KWallet or the Secret Service, never to a file.</li>
+      <li>No favicons are fetched: requesting one would tell a third party
+      which sites are in your vault.</li>
+      <li>Copied secrets are tagged so Klipper keeps them out of its history,
+      and are cleared after a delay you choose.</li>
+    </ul>
+    <p class="note">
+      The key schedule is pinned by tests against published vectors (RFC 4231,
+      RFC 5869, RFC 6238, PBKDF2-SHA256 and Argon2id), so a regression fails
+      the build rather than quietly producing an unreadable vault.
+    </p>
+  </section>
+
+  <section>
+    <h2>Contributing</h2>
+    <p>
+      Bug reports and patches are welcome — see
+      <a href="https://github.com/timpalpant/kvault/issues">issues</a> and
+      <a href="https://github.com/timpalpant/kvault/pulls">pull requests</a>.
+      KVault is free software under the GPL-3.0-or-later.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>
+      KVault is an independent project. It is not affiliated with, endorsed by,
+      or sponsored by Bitwarden, Inc. &ldquo;Bitwarden&rdquo; is a trademark of
+      Bitwarden, Inc., referred to here only to describe the service this
+      client interoperates with.
+    </p>
+    <p>© 2026 the KVault authors · GPL-3.0-or-later</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=KVault
+GenericName=Password Manager
+Comment=Unofficial native client for Bitwarden servers
+Exec=kvault
+Icon=io.github.timpalpant.kvault
+Terminal=false
+Categories=Qt;Utility;Security;
+Keywords=password;vault;bitwarden;credentials;secrets;totp;
+StartupNotify=true
+StartupWMClass=kvault
+X-DBUS-ServiceName=io.github.timpalpant.kvault

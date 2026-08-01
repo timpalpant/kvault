@@ -1,0 +1,214 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    # Arch is used because it is the only distribution that currently ships
+    # Qt 6.8+, KF6 and Kirigami Addons together without building them by hand.
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed \
+            base-devel cmake ninja git \
+            qt6-base qt6-declarative qt6-svg \
+            kirigami kirigami-addons ki18n kcoreaddons qqc2-desktop-style \
+            qtkeychain-qt6 openssl argon2
+
+      - uses: actions/checkout@v4
+
+      - name: Trust the workspace
+        # The container runs as root while the checkout is owned by the runner
+        # user, which git otherwise refuses to touch.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        # The suite sets QT_QPA_PLATFORM=offscreen itself, so no display is needed.
+        run: ctest --test-dir build --output-on-failure --no-tests=error
+
+      - name: Verify the install tree
+        run: |
+          DESTDIR="$PWD/staging" cmake --install build
+          find staging -type f | sort
+          # The desktop entry's Icon= must resolve to an installed icon,
+          # otherwise the launcher shows a blank tile.
+          test -f staging/usr/bin/kvault
+          test -f staging/usr/share/applications/io.github.timpalpant.kvault.desktop
+          test -f staging/usr/share/metainfo/io.github.timpalpant.kvault.metainfo.xml
+          test -f staging/usr/share/icons/hicolor/scalable/apps/io.github.timpalpant.kvault.svg
+
+  core-only:
+    name: Core build without a GUI stack
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      # Proves the crypto and protocol layers really are independent of Qt Quick
+      # and KDE Frameworks, which is what makes them cheap to test.
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm --needed base-devel cmake ninja git qt6-base openssl argon2
+
+      - uses: actions/checkout@v4
+
+      - name: Trust the workspace
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Build and test the core only
+        run: |
+          cmake -S . -B build-core -G Ninja -DKVAULT_BUILD_APP=OFF -DCMAKE_BUILD_TYPE=Release
+          cmake --build build-core
+          ctest --test-dir build-core --output-on-failure --no-tests=error
+
+  lint:
+    name: QML and metadata
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed \
+            base-devel cmake ninja git \
+            qt6-base qt6-declarative qt6-svg qt6-tools \
+            kirigami kirigami-addons ki18n kcoreaddons qqc2-desktop-style \
+            qtkeychain-qt6 openssl argon2 \
+            appstream desktop-file-utils
+
+      - uses: actions/checkout@v4
+
+      - name: Trust the workspace
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Validate the desktop entry
+        run: desktop-file-validate data/io.github.timpalpant.kvault.desktop
+
+      - name: Validate the AppStream metadata
+        # --no-net because the checks that hit the network are flaky in CI and
+        # would fail on URLs that are fine but rate-limited.
+        run: appstreamcli validate --no-net --strict data/io.github.timpalpant.kvault.metainfo.xml
+
+      - name: qmllint
+        # The tree is expected to be silent; qmllint warnings are failures.
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+          cmake --build build --target all_qmllint
+
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm --needed git clang
+
+      - uses: actions/checkout@v4
+
+      - name: Check clang-format
+        run: |
+          find src tests \( -name '*.cpp' -o -name '*.h' \) -print0 \
+            | xargs -0 clang-format --dry-run --Werror
+
+  packaging:
+    name: Packaging files
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install dependencies
+        run: pacman -Syu --noconfirm --needed base-devel git pacman-contrib
+
+      - uses: actions/checkout@v4
+
+      - name: Trust the workspace
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Lint the PKGBUILDs
+        run: |
+          useradd -m builder
+          chown -R builder .
+          for dir in packaging/aur/*/; do
+            echo "== $dir"
+            bash -n "$dir/PKGBUILD"
+            su builder -c "cd '$dir' && makepkg --printsrcinfo > /dev/null"
+          done
+
+      # The release package downloads a fixed tarball, so it has to verify it.
+      # SKIP belongs only to kvault-git, whose source is a git checkout.
+      - name: Check the release tarball is pinned by digest
+        run: |
+          if grep -q "^sha256sums=('SKIP')" packaging/aur/kvault/PKGBUILD; then
+            echo "::error::packaging/aur/kvault/PKGBUILD downloads a tarball without checking it"
+            exit 1
+          fi
+
+      # Builds the pacman package the release ships, from this commit, so a
+      # broken PKGBUILD surfaces here rather than while cutting a release.
+      - name: Build the pacman package
+        run: ./packaging/build-arch-package.sh --outdir "$PWD/dist"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kvault-pacman-package
+          path: dist/*.pkg.tar.zst
+          if-no-files-found: error
+
+  flatpak:
+    name: Flatpak
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Deliberately not the bilelmoussaoui/flatpak-github-actions container:
+      # its published tags stop at kde-6.7 and this app targets the 6.9 runtime,
+      # so that image cannot be pulled. Installing flatpak directly works for
+      # any runtime version.
+      - name: Install flatpak
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --if-not-exists --user \
+            flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Install the KDE runtime
+        run: |
+          flatpak install --user --noninteractive flathub \
+            org.kde.Platform//6.9 org.kde.Sdk//6.9
+
+      - name: Cache the flatpak-builder state
+        uses: actions/cache@v4
+        with:
+          path: .flatpak-builder
+          key: flatpak-builder-${{ hashFiles('packaging/flatpak/*.yml') }}
+          restore-keys: flatpak-builder-
+
+      - name: Build
+        # The CI manifest builds this checkout; the tagged one is for Flathub.
+        run: |
+          flatpak-builder --user --disable-rofiles-fuse --force-clean \
+            --repo=flatpak-repo build-flatpak \
+            packaging/flatpak/io.github.timpalpant.kvault.ci.yml
+
+      - name: Create the bundle
+        run: |
+          flatpak build-bundle flatpak-repo kvault.flatpak \
+            io.github.timpalpant.kvault
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kvault-flatpak
+          path: kvault.flatpak
+          if-no-files-found: error

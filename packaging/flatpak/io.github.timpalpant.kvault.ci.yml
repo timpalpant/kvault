@@ -1,0 +1,92 @@
+# Same as io.github.timpalpant.kvault.yml, but builds the working tree instead
+# of a published tag. Used by CI, by the release workflow and for local builds;
+# the Flathub submission uses the tagged manifest.
+#
+#   flatpak install -y flathub org.kde.Platform//6.9 org.kde.Sdk//6.9
+#   flatpak-builder --user --install --force-clean \
+#       build-flatpak packaging/flatpak/io.github.timpalpant.kvault.ci.yml
+#   flatpak run io.github.timpalpant.kvault
+#
+# The KDE runtime supplies Qt 6, the KDE Frameworks KVault needs, OpenSSL and
+# qqc2-desktop-style. Kirigami Addons, qtkeychain and libargon2 are not in it,
+# so they are built here.
+id: io.github.timpalpant.kvault
+runtime: org.kde.Platform
+runtime-version: '6.9'
+sdk: org.kde.Sdk
+command: kvault
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # Reaching the Bitwarden server is the entire point of the app.
+  - --share=network
+  # Session tokens live in the wallet. Without these the app still works, but
+  # asks for the master password on every launch instead of resuming a session.
+  - --talk-name=org.freedesktop.secrets
+  - --talk-name=org.kde.kwalletd6
+  # Reads the desktop colour scheme so it does not look foreign.
+  - --filesystem=xdg-config/kdeglobals:ro
+
+cleanup:
+  - /include
+  - /lib/pkgconfig
+  - /lib/cmake
+  - /share/man
+  - /bin/argon2
+  - '*.a'
+  - '*.la'
+
+modules:
+  - name: libargon2
+    buildsystem: simple
+    build-commands:
+      # LIBRARY_REL defaults to lib/x86_64-linux-gnu, which is not where the
+      # runtime looks; /app/lib is.
+      - make -j $FLATPAK_BUILDER_N_JOBS PREFIX=/app LIBRARY_REL=lib
+      - make install PREFIX=/app LIBRARY_REL=lib
+    sources:
+      - type: archive
+        url: https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/20190702.tar.gz
+        sha256: daf972a89577f8772602bf2eb38b6a3dd3d922bf5724d45e7f9589b5e830442c
+
+  - name: qtkeychain
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      # Qt 6 is the default in 0.17; BUILD_WITH_QT5 is the switch that exists.
+      - -DBUILD_WITH_QT5=OFF
+      - -DBUILD_TEST_APPLICATION=OFF
+      - -DBUILD_TRANSLATIONS=OFF
+      - -DBUILD_SHARED_LIBS=ON
+    sources:
+      - type: archive
+        url: https://github.com/frankosterfeld/qtkeychain/archive/refs/tags/0.17.0.tar.gz
+        sha256: 3b85c3929034b0a99da777130c34d99f006fcd3a9d56564159399a33fee0e504
+
+  - name: kirigami-addons
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TESTING=OFF
+    sources:
+      - type: archive
+        url: https://download.kde.org/stable/kirigami-addons/kirigami-addons-1.13.1.tar.xz
+        sha256: 76026f0abe8c948208ce75a02a9ecac60c618ac5288ca546e09da64bc4af7050
+
+  - name: kvault
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DBUILD_TESTING=ON
+    post-install:
+      # A broken key schedule must never reach a user, so the offline tests run
+      # as part of packaging. apitest is excluded: it binds a localhost socket,
+      # which is not dependable inside the build sandbox.
+      - ctest --output-on-failure --no-tests=error -E apitest
+    sources:
+      - type: dir
+        path: ../..

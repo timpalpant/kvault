@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 Tim Palpant -->
+<component type="desktop-application">
+  <id>io.github.timpalpant.kvault</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <name>KVault</name>
+  <summary>Unofficial native client for Bitwarden servers</summary>
+
+  <developer id="io.github.timpalpant">
+    <name>Tim Palpant</name>
+  </developer>
+
+  <description>
+    <p>
+      KVault is an unofficial Kirigami client for Bitwarden vaults. It speaks
+      the Bitwarden API directly and decrypts everything locally with OpenSSL,
+      so no browser engine and no JavaScript runtime is involved.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>All item types: logins, secure notes, cards, identities and SSH keys</li>
+      <li>Create, edit, delete and restore items, and organise them in folders</li>
+      <li>Time-based one-time password codes with a live countdown</li>
+      <li>Download and decrypt file attachments</li>
+      <li>An offline cache, so the vault stays readable without a network</li>
+      <li>A password and passphrase generator</li>
+      <li>Automatic locking when idle, and clipboard entries that clear themselves</li>
+    </ul>
+    <p>
+      Your master password is never stored and never leaves the device. It is
+      used locally to derive the keys that decrypt the vault; only a one-way
+      hash of it is sent to the server. Session tokens are kept in your wallet
+      rather than on disk.
+    </p>
+    <p>
+      KVault is an independent project, not affiliated with, endorsed by, or
+      sponsored by Bitwarden, Inc. "Bitwarden" is a trademark of Bitwarden,
+      Inc., referred to here only to describe the service this client
+      interoperates with.
+    </p>
+  </description>
+
+  <launchable type="desktop-id">io.github.timpalpant.kvault.desktop</launchable>
+
+  <!--
+    TODO before submitting to Flathub: Flathub requires at least one
+    screenshot, and the image URLs must resolve at build time. Capture the
+    vault list and an item detail view, commit them under docs/screenshots/,
+    and uncomment this block.
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://timpalpant.github.io/kvault/screenshots/vault.png</image>
+      <caption>Browsing the vault</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://timpalpant.github.io/kvault/screenshots/item.png</image>
+      <caption>A login with a one-time password code</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://timpalpant.github.io/kvault/screenshots/generator.png</image>
+      <caption>Generating a passphrase</caption>
+    </screenshot>
+  </screenshots>
+  -->
+
+  <url type="homepage">https://timpalpant.github.io/kvault/</url>
+  <url type="bugtracker">https://github.com/timpalpant/kvault/issues</url>
+  <url type="vcs-browser">https://github.com/timpalpant/kvault</url>
+  <url type="contribute">https://github.com/timpalpant/kvault</url>
+
+  <provides>
+    <binary>kvault</binary>
+  </provides>
+
+  <categories>
+    <category>Utility</category>
+    <category>Security</category>
+  </categories>
+
+  <keywords>
+    <keyword>password</keyword>
+    <keyword>vault</keyword>
+    <keyword>credentials</keyword>
+    <keyword>secrets</keyword>
+    <keyword>totp</keyword>
+    <keyword>2fa</keyword>
+  </keywords>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#a3d3ef</color>
+    <color type="primary" scheme_preference="dark">#1d76a8</color>
+  </branding>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="0.1.0" date="2026-08-01" type="development">
+      <description>
+        <p>First release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

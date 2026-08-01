@@ -1,0 +1,52 @@
+# Maintainer: Tim Palpant <tim@palpant.us>
+# PKGBUILD for the kvault-git AUR package (builds from the default branch).
+pkgname=kvault-git
+_pkgname=kvault
+pkgver=r1.0000000
+pkgrel=1
+pkgdesc="Unofficial native Kirigami client for Bitwarden servers (git)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/timpalpant/kvault"
+license=('GPL-3.0-or-later')
+depends=(
+  'argon2'
+  'kcoreaddons'
+  'ki18n'
+  'kirigami'
+  'kirigami-addons'
+  'openssl'
+  'qqc2-desktop-style'
+  'qt6-base'
+  'qt6-declarative'
+  'qt6-svg'
+  'qtkeychain-qt6'
+)
+makedepends=('cmake' 'ninja' 'git')
+provides=("$_pkgname=$pkgver")
+conflicts=("$_pkgname")
+# SKIP is correct for a VCS source and only for a VCS source: git checks the
+# objects it fetches itself. The release PKGBUILD pins a real digest instead.
+source=("$_pkgname::git+$url.git")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$_pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -S "$_pkgname" -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DBUILD_TESTING=ON
+  cmake --build build
+}
+
+check() {
+  # apitest binds a localhost socket, which some build environments disallow.
+  ctest --test-dir build --output-on-failure --no-tests=error -E apitest
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}
