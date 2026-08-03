@@ -18,10 +18,6 @@ OpenSSL and libargon2. There is no browser engine and no Node runtime.
 > sponsored by Bitwarden, Inc. "Bitwarden" is a trademark of Bitwarden, Inc.,
 > referred to here only to describe the service this client interoperates with.
 
-> [!NOTE]
-> The Flathub and AUR badges will read "not found" until the first release is
-> submitted to those registries. Building from source works today.
-
 ## Features
 
 - **All item types** — logins, secure notes, cards, identities and SSH keys,
@@ -53,9 +49,6 @@ flatpak install --user kvault.flatpak
 flatpak run io.github.timpalpant.kvault
 ```
 
-Once it is on Flathub, `flatpak install flathub io.github.timpalpant.kvault`
-will work instead.
-
 To build it yourself:
 
 ```sh
@@ -66,12 +59,7 @@ flatpak-builder --user --install --force-clean \
 
 ### Arch Linux
 
-```sh
-yay -S kvault        # tagged releases
-yay -S kvault-git    # the default branch
-```
-
-Each release also attaches a prebuilt `*.pkg.tar.zst`, if you would rather not
+Each release attaches a prebuilt `*.pkg.tar.zst`, if you would rather not
 build locally:
 
 ```sh
@@ -171,54 +159,7 @@ Every other check stays on, and CI treats warnings as failures.
   reported version as too old.
 - One account at a time; no key rotation or password changes.
 
-## Packaging and CI
-
-| Path | What it is |
-| --- | --- |
-| `.github/workflows/ci.yml` | Build and test on Arch, a GUI-free core-only build, qmllint, AppStream and desktop-entry validation, clang-format, PKGBUILD lint, Flatpak build |
-| `.github/workflows/release.yml` | On a `v*` tag: verifies the tag against the project and AppStream versions, then builds the source tarball, the Arch package and the Flatpak bundle and drafts a release |
-| `.github/workflows/pages.yml` | Deploys `docs/` to GitHub Pages on the same tag |
-| `packaging/flatpak/io.github.timpalpant.kvault.yml` | Flathub manifest, builds a tagged release |
-| `packaging/flatpak/io.github.timpalpant.kvault.ci.yml` | Same, but builds the working tree; used by CI and the release |
-| `packaging/aur/kvault/PKGBUILD` | AUR release package |
-| `packaging/aur/kvault-git/PKGBUILD` | AUR development package |
-| `packaging/build-arch-package.sh` | Builds a `*.pkg.tar.zst` from a checkout using the AUR PKGBUILD |
-| `docs/` | The website |
-
-### Cutting a release
-
-1. Bump `project(kvault VERSION ...)` in `CMakeLists.txt` and `pkgver` in
-   `packaging/aur/kvault/PKGBUILD`.
-2. Add a `<release version="X.Y.Z">` entry to the AppStream metainfo, and bump
-   the `tag:` in the Flathub manifest.
-3. Push a `vX.Y.Z` tag.
-
-The release workflow refuses the tag unless it matches the version in
-`CMakeLists.txt` and has a matching `<release>` entry, then builds three
-artifacts — source tarball, Arch package, Flatpak bundle — each with a
-`.sha256`, and drafts a GitHub release. It also prints the `sha256sums=(...)`
-line for the AUR PKGBUILD; paste that in before publishing the draft.
-
-The website deploys from the same tag.
-
-Before submitting to Flathub you need screenshots: at least one is required and
-the image URLs have to resolve at build time. Put them in `docs/screenshots/`
-and uncomment the `<screenshots>` block in
-`data/io.github.timpalpant.kvault.metainfo.xml`.
-
-### Why the release PKGBUILD never uses `SKIP`
-
-`sha256sums=('SKIP')` is correct for `kvault-git`, whose source is a git
-checkout that git verifies itself. For the release package it would mean
-makepkg builds whatever the download happened to return, so the tarball is
-pinned by digest instead, and CI fails the build if that is ever weakened back
-to `SKIP`.
-
-The digest covers the tarball uploaded by the release workflow, not GitHub's
-auto-generated "Source code" links: those are produced on demand and are not
-byte-stable, so they cannot be pinned.
-
-## Licence
+## License
 
 GPL-3.0-or-later. The bundled EFF long wordlist is CC BY 3.0 US.
 
