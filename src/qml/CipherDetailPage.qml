@@ -396,7 +396,7 @@ FormCard.FormCardPage {
                     value: root.details.passportNumber ?? ""
                 },
                 {
-                    label: i18n("Licence number"),
+                    label: i18n("License number"),
                     value: root.details.licenseNumber ?? ""
                 }
             ]

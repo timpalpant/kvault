@@ -175,7 +175,7 @@ void CryptoTest::testEncStringRoundTrip()
     QVERIFY(!encrypted.isNull());
     QCOMPARE(encrypted.type(), EncString::AesCbc256_HmacSha256_B64);
 
-    // Serialise and reparse, as happens when talking to the server.
+    // Serialize and reparse, as happens when talking to the server.
     const EncString reparsed = EncString::parse(encrypted.toString());
     QVERIFY(!reparsed.isNull());
     const auto decrypted = reparsed.decryptString(key);
@@ -241,8 +241,8 @@ void CryptoTest::testEncStringMalformed()
 void CryptoTest::testCoseEncryptionIsRejectedNotMisread()
 {
     // Bitwarden's newer "v2" encryption wraps XChaCha20-Poly1305 in COSE and
-    // serialises it as a single base64 blob under type 7. KVault does not
-    // implement it, and the important property is that it is recognised as a
+    // serializes it as a single base64 blob under type 7. KVault does not
+    // implement it, and the important property is that it is recognized as a
     // known-but-unsupported format rather than misparsed as AES-CBC or silently
     // treated as corrupt.
     const QString cose = QStringLiteral("7.") + QString::fromLatin1(QByteArray("not really cose, but well formed").toBase64());
@@ -426,10 +426,10 @@ void CryptoTest::testCipherRoundTripAllTypes()
         // Nothing recognisable may survive into the request body. The names are
         // long and distinctive on purpose: a short string would turn up inside
         // random base64 by chance and make this check flaky rather than strict.
-        const QByteArray serialised = QJsonDocument(encrypted).toJson();
-        QVERIFY2(!serialised.contains(original.name.toUtf8()), qPrintable(original.name));
+        const QByteArray serialized = QJsonDocument(encrypted).toJson();
+        QVERIFY2(!serialized.contains(original.name.toUtf8()), qPrintable(original.name));
         if (!original.notes.isEmpty()) {
-            QVERIFY(!serialised.contains(original.notes.toUtf8()));
+            QVERIFY(!serialized.contains(original.notes.toUtf8()));
         }
 
         const auto decrypted = Cipher::fromEncryptedJson(encrypted, userKey);

@@ -8,7 +8,7 @@
 namespace kvault {
 
 /**
- * Bitwarden's "EncString": a self-describing ciphertext, serialised as
+ * Bitwarden's "EncString": a self-describing ciphertext, serialized as
  *
  *     <type>.<base64 iv>|<base64 ciphertext>[|<base64 mac>]
  *
@@ -32,7 +32,7 @@ public:
         Rsa2048_OaepSha1_HmacSha256_B64 = 6,
         /**
          * XChaCha20-Poly1305 in a COSE envelope, from Bitwarden's newer "v2"
-         * encryption. Recognised so it can be reported precisely, but not
+         * encryption. Recognized so it can be reported precisely, but not
          * implemented; KVault asks the server for the classic format instead.
          */
         CoseEncrypt0 = 7,
@@ -43,7 +43,7 @@ public:
 
     static EncString parse(const QString &encoded);
     static bool isRsaType(Type type);
-    /// False for formats we can recognise but not decrypt, such as CoseEncrypt0.
+    /// False for formats we can recognize but not decrypt, such as CoseEncrypt0.
     static bool isSupportedType(Type type);
 
     bool isNull() const { return m_type == Invalid; }
@@ -61,7 +61,7 @@ public:
     /// Convenience wrapper returning UTF-8 text.
     std::optional<QString> decryptString(const SymmetricKey &key) const;
 
-    /// Decrypt an RSA-wrapped value (used for organisation keys).
+    /// Decrypt an RSA-wrapped value (used for organization keys).
     std::optional<SecureBytes> decryptRsa(const SecureBytes &pkcs8PrivateKey) const;
 
     /// Encrypt as type 2 (or type 0 when the key has no MAC key).

@@ -575,7 +575,7 @@ void VaultManager::applySyncPayload(const QJsonObject &payload)
         const QString organizationId = object.value(QStringLiteral("organizationId")).toString();
 
         if (!m_keys.hasKeyForOrganization(organizationId)) {
-            // Shared item whose organisation key we could not unwrap.
+            // Shared item whose organization key we could not unwrap.
             ++failed;
             continue;
         }

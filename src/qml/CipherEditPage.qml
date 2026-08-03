@@ -444,7 +444,7 @@ FormCard.FormCardPage {
         }
         FormCard.FormDelegateSeparator {}
         FormCard.FormPasswordFieldDelegate {
-            label: i18n("Licence number")
+            label: i18n("License number")
             text: root.editor.licenseNumber
             onTextEdited: root.editor.licenseNumber = text
         }

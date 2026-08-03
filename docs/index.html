@@ -118,6 +118,25 @@
   .features strong { display: block; margin-bottom: 4px; }
   .features span { color: var(--muted); font-size: .95rem; }
 
+  .screenshots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .screenshots figure {
+    margin: 0;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .screenshots img { display: block; width: 100%; height: auto; }
+  .screenshots figcaption {
+    padding: 10px 14px;
+    color: var(--muted);
+    font-size: .9rem;
+  }
+
   pre {
     background: var(--code-bg);
     border: 1px solid var(--border);
@@ -172,8 +191,8 @@
         src="https://img.shields.io/github/v/release/timpalpant/kvault?include_prereleases&amp;label=release&amp;logo=github"
         alt="Latest release"></a>
       <a href="https://github.com/timpalpant/kvault/blob/master/LICENSE"><img
-        src="https://img.shields.io/badge/licence-GPL--3.0--or--later-blue"
-        alt="Licence"></a>
+        src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue"
+        alt="License"></a>
     </div>
 
     <div class="actions">
@@ -182,12 +201,23 @@
     </div>
   </header>
 
-  <!--
-    A screenshot belongs here. None is included yet: the captures taken during
-    development show real account data. Drop a sanitised image into
-    docs/screenshots/ and reference it from this spot.
-  -->
-
+  <section>
+    <h2>Screenshots</h2>
+    <div class="screenshots">
+      <figure>
+        <img src="screenshots/vault.png" alt="KVault vault list">
+        <figcaption>Vault list</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/item.png" alt="KVault item details">
+        <figcaption>Item details</figcaption>
+      </figure>
+      <figure>
+        <img src="screenshots/generator.png" alt="KVault password generator">
+        <figcaption>Password generator</figcaption>
+      </figure>
+    </div>
+  </section>
 
   <section>
     <h2>What it does</h2>
@@ -198,7 +228,7 @@
       </li>
       <li>
         <strong>Full read and write</strong>
-        <span>Create, edit, trash, restore and delete permanently, and organise items into folders.</span>
+        <span>Create, edit, trash, restore and delete permanently, and organize items into folders.</span>
       </li>
       <li>
         <strong>One-time passwords</strong>
@@ -232,8 +262,12 @@
 flatpak run io.github.timpalpant.kvault</code></pre>
 
     <h3>Arch Linux</h3>
-<pre><code>paru -S kvault        # tagged releases
-paru -S kvault-git    # the default branch</code></pre>
+    <p>
+      Download <code>kvault-*.pkg.tar.zst</code> from the
+      <a href="https://github.com/timpalpant/kvault/releases">latest release</a>,
+      then:
+    </p>
+<pre><code>sudo pacman -U kvault-*.pkg.tar.zst</code></pre>
 
     <h3>From source</h3>
 <pre><code>git clone https://github.com/timpalpant/kvault.git

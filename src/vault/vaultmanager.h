@@ -21,7 +21,7 @@ namespace kvault {
 class AppSettings;
 
 /**
- * The application's centre of gravity.
+ * The application's center of gravity.
  *
  * Owns the session, the key material and the decrypted vault, and is the only
  * thing QML talks to for anything that touches the account.
@@ -81,7 +81,7 @@ public:
     /// Ask the server to email a two-step login code.
     Q_INVOKABLE void requestEmailCode();
 
-    /// Continue a login the server paused because it does not recognise this device.
+    /// Continue a login the server paused because it does not recognize this device.
     Q_INVOKABLE void submitNewDeviceCode(const QString &code);
     /// Retry without a code, which makes the server email a fresh one.
     Q_INVOKABLE void resendNewDeviceCode();

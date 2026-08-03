@@ -65,7 +65,7 @@ void TrayController::ensureTrayIcon()
     m_trayIcon->setCategory(KStatusNotifierItem::ApplicationStatus);
     m_trayIcon->setTitle(i18n("KVault"));
     // Plasma Vault ships this symbolic Breeze icon. Naming it lets the tray
-    // load a size and colour treatment appropriate for the active theme.
+    // load a size and color treatment appropriate for the active theme.
     const QString trayIconName = QStringLiteral("plasmavault-symbolic");
     if (QIcon::hasThemeIcon(trayIconName)) {
         m_trayIcon->setIconByName(trayIconName);

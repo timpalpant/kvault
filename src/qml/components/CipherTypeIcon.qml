@@ -5,7 +5,7 @@ import org.kde.kirigami as Kirigami
 import io.github.timpalpant.kvault
 
 /**
- * An item's avatar: a coloured disc with its initial, plus a small badge
+ * An item's avatar: a colored disc with its initial, plus a small badge
  * marking the item type.
  *
  * Deliberately generated locally. Fetching real favicons would tell a third
@@ -45,7 +45,7 @@ Item {
         anchors.rightMargin: -width * 0.15
         anchors.bottomMargin: -height * 0.15
 
-        // A contrasting plate keeps the badge legible over any avatar colour.
+        // A contrasting plate keeps the badge legible over any avatar color.
         Rectangle {
             anchors.centerIn: parent
             width: parent.width + 3

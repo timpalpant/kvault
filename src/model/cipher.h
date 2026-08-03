@@ -155,7 +155,7 @@ public:
 
     /**
      * Decrypt a cipher from the sync payload.
-     * @param containerKey the user key, or the organisation key for shared items.
+     * @param containerKey the user key, or the organization key for shared items.
      */
     static std::optional<Cipher> fromEncryptedJson(const QJsonObject &json, const SymmetricKey &containerKey);
 

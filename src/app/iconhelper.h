@@ -27,7 +27,7 @@ public:
     Q_INVOKABLE QString avatarLetter(const QString &name) const;
 
     /**
-     * A stable colour for an item, derived from its name.
+     * A stable color for an item, derived from its name.
      * Deliberately local: no favicons are fetched, which would leak the
      * contents of the vault to third-party servers.
      */

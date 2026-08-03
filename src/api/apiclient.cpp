@@ -103,7 +103,7 @@ QString extractErrorMessage(const QJsonObject &json, int httpStatus)
 
     switch (httpStatus) {
     case 401:
-        return QObject::tr("Not authorised. Your session may have expired.");
+        return QObject::tr("Not authorized. Your session may have expired.");
     case 403:
         return QObject::tr("The server refused this request.");
     case 404:
@@ -193,7 +193,7 @@ void ApiClient::applyCommonHeaders(QNetworkRequest &request) const
     request.setHeader(QNetworkRequest::UserAgentHeader, QString::fromLatin1(UserAgent));
 
     // The server refuses requests without a parseable client version, and reads
-    // the device headers to recognise this installation.
+    // the device headers to recognize this installation.
     request.setRawHeader("Bitwarden-Client-Version", clientVersion());
     request.setRawHeader("Bitwarden-Client-Name", ClientId);
     request.setRawHeader("Is-Prerelease", "0");
@@ -284,8 +284,8 @@ void ApiClient::withValidToken(std::function<void(bool)> work)
 
 void ApiClient::authenticatedRequest(Method method, const QString &path, const QByteArray &body, const QByteArray &contentType, Handler handler)
 {
-    withValidToken([this, method, path, body, contentType, handler = std::move(handler)](bool authorised) {
-        if (!authorised) {
+    withValidToken([this, method, path, body, contentType, handler = std::move(handler)](bool authorized) {
+        if (!authorized) {
             ApiResponse response;
             response.errorMessage = QObject::tr("Your session has expired. Please log in again.");
             if (handler) {

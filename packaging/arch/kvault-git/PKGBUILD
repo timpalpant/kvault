@@ -1,5 +1,5 @@
 # Maintainer: Tim Palpant <tim@palpant.us>
-# PKGBUILD for the kvault-git AUR package (builds from the default branch).
+# PKGBUILD for the kvault-git development package (builds from the default branch).
 pkgname=kvault-git
 _pkgname=kvault
 pkgver=r1.0000000

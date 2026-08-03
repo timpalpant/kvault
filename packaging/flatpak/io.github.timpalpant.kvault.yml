@@ -1,4 +1,4 @@
-# Flathub manifest for KVault: builds a published tag.
+# Tagged Flatpak manifest for KVault: builds a published tag.
 #
 # Use io.github.timpalpant.kvault.ci.yml to build the working tree instead;
 # that is what CI and the release workflow use.
@@ -23,7 +23,7 @@ finish-args:
   # asks for the master password on every launch instead of resuming a session.
   - --talk-name=org.freedesktop.secrets
   - --talk-name=org.kde.kwalletd6
-  # Reads the desktop colour scheme so it does not look foreign.
+  # Reads the desktop color scheme so it does not look foreign.
   - --filesystem=xdg-config/kdeglobals:ro
 
 cleanup:
@@ -82,7 +82,7 @@ modules:
       # out of the published application and avoid nested-sandbox test issues.
       - -DBUILD_TESTING=OFF
     sources:
-      # Flathub requires a pinned tag or commit rather than a branch. Bump this
+      # Tagged release manifests require a pinned tag or commit. Bump this
       # in the same commit that bumps the version in CMakeLists.txt.
       - type: git
         url: https://github.com/timpalpant/kvault.git

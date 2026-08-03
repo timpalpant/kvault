@@ -21,7 +21,7 @@
     <p>Features:</p>
     <ul>
       <li>All item types: logins, secure notes, cards, identities and SSH keys</li>
-      <li>Create, edit, delete and restore items, and organise them in folders</li>
+      <li>Create, edit, delete and restore items, and organize them in folders</li>
       <li>Time-based one-time password codes with a live countdown</li>
       <li>Download and decrypt file attachments</li>
       <li>An offline cache, so the vault stays readable without a network</li>
@@ -44,12 +44,6 @@
 
   <launchable type="desktop-id">io.github.timpalpant.kvault.desktop</launchable>
 
-  <!--
-    TODO before submitting to Flathub: Flathub requires at least one
-    screenshot, and the image URLs must resolve at build time. Capture the
-    vault list and an item detail view, commit them under docs/screenshots/,
-    and uncomment this block.
-
   <screenshots>
     <screenshot type="default">
       <image>https://timpalpant.github.io/kvault/screenshots/vault.png</image>
@@ -64,7 +58,6 @@
       <caption>Generating a passphrase</caption>
     </screenshot>
   </screenshots>
-  -->
 
   <url type="homepage">https://timpalpant.github.io/kvault/</url>
   <url type="bugtracker">https://github.com/timpalpant/kvault/issues</url>

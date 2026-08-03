@@ -62,7 +62,7 @@ QString IconHelper::avatarLetter(const QString &name) const
 
 QColor IconHelper::avatarColor(const QString &name) const
 {
-    // Hash so the colour is stable across restarts and independent of ordering.
+    // Hash so the color is stable across restarts and independent of ordering.
     const QByteArray digest = QCryptographicHash::hash(name.toUtf8(), QCryptographicHash::Sha256);
     const int hue = int(uint8_t(digest.at(0))) * 360 / 256;
     // Fixed saturation and lightness keep every avatar legible against both

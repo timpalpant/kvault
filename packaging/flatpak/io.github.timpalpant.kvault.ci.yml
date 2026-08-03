@@ -1,8 +1,8 @@
 # Same as io.github.timpalpant.kvault.yml, but builds the working tree instead
 # of a published tag. Used by CI, by the release workflow and for local builds;
-# the Flathub submission uses the tagged manifest.
+# tagged releases use the tagged manifest.
 #
-#   flatpak install -y flathub org.kde.Platform//6.9 org.kde.Sdk//6.9
+#   # Install the matching KDE Platform and SDK first.
 #   flatpak-builder --user --install --force-clean \
 #       build-flatpak packaging/flatpak/io.github.timpalpant.kvault.ci.yml
 #   flatpak run io.github.timpalpant.kvault
@@ -27,7 +27,7 @@ finish-args:
   # asks for the master password on every launch instead of resuming a session.
   - --talk-name=org.freedesktop.secrets
   - --talk-name=org.kde.kwalletd6
-  # Reads the desktop colour scheme so it does not look foreign.
+  # Reads the desktop color scheme so it does not look foreign.
   - --filesystem=xdg-config/kdeglobals:ro
 
 cleanup:

@@ -72,7 +72,7 @@ void VaultKeys::loadOrganizationKeys(const QJsonArray &organizations)
     m_organizationKeys.clear();
     if (m_privateKey.isEmpty()) {
         if (!organizations.isEmpty()) {
-            qCWarning(KVAULT_VAULT) << "No private key available; organisation items will not decrypt";
+            qCWarning(KVAULT_VAULT) << "No private key available; organization items will not decrypt";
         }
         return;
     }
@@ -88,7 +88,7 @@ void VaultKeys::loadOrganizationKeys(const QJsonArray &organizations)
         const EncString wrapped = EncString::parse(wrappedKey);
         auto material = wrapped.decryptRsa(m_privateKey);
         if (!material) {
-            qCWarning(KVAULT_VAULT) << "Could not decrypt key for organisation" << id;
+            qCWarning(KVAULT_VAULT) << "Could not decrypt key for organization" << id;
             continue;
         }
         SymmetricKey key(std::move(*material));

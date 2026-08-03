@@ -57,7 +57,7 @@ public:
     void setColumnState(const QString &state);
 
     /**
-     * A stable per-installation id, sent to the server so it can recognise this
+     * A stable per-installation id, sent to the server so it can recognize this
      * device and not demand new-device verification on every login.
      */
     QString deviceIdentifier();

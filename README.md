@@ -2,9 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/timpalpant/kvault/ci.yml?branch=master&label=CI&logo=github)](https://github.com/timpalpant/kvault/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/timpalpant/kvault?include_prereleases&label=release&logo=github)](https://github.com/timpalpant/kvault/releases)
-[![Flathub](https://img.shields.io/flathub/v/io.github.timpalpant.kvault?logo=flathub)](https://flathub.org/apps/io.github.timpalpant.kvault)
-[![AUR](https://img.shields.io/aur/version/kvault?logo=archlinux)](https://aur.archlinux.org/packages/kvault)
-[![Licence](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
 An unofficial native Kirigami/Qt client for Bitwarden vaults, for people who
 would rather not run an Electron app to look at a password.
@@ -18,12 +16,20 @@ OpenSSL and libargon2. There is no browser engine and no Node runtime.
 > sponsored by Bitwarden, Inc. "Bitwarden" is a trademark of Bitwarden, Inc.,
 > referred to here only to describe the service this client interoperates with.
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/vault.png" alt="KVault vault list" width="32%">
+  <img src="docs/screenshots/item.png" alt="KVault item details" width="32%">
+  <img src="docs/screenshots/generator.png" alt="KVault password generator" width="32%">
+</p>
+
 ## Features
 
 - **All item types** — logins, secure notes, cards, identities and SSH keys,
   including custom fields, multiple URIs and password history.
 - **Full read/write** — create, edit, move to trash, restore and delete
-  permanently; organise items into folders.
+  permanently; organize items into folders.
 - **TOTP** — live verification codes with a countdown ring. Handles bare base32
   secrets, `otpauth://` URIs (SHA-1/256/512, custom digits and period) and Steam
   Guard codes.
@@ -49,10 +55,9 @@ flatpak install --user kvault.flatpak
 flatpak run io.github.timpalpant.kvault
 ```
 
-To build it yourself:
+To build it yourself, install the matching KDE Platform and SDK, then:
 
 ```sh
-flatpak install -y flathub org.kde.Platform//6.9 org.kde.Sdk//6.9
 flatpak-builder --user --install --force-clean \
     build-flatpak packaging/flatpak/io.github.timpalpant.kvault.ci.yml
 ```
@@ -66,7 +71,7 @@ build locally:
 sudo pacman -U kvault-*.pkg.tar.zst
 ```
 
-The `PKGBUILD`s live in [`packaging/aur/`](packaging/aur/). To build a package
+The `PKGBUILD`s live in [`packaging/arch/`](packaging/arch/). To build a package
 from a checkout, before any release exists:
 
 ```sh
@@ -74,9 +79,10 @@ from a checkout, before any release exists:
 sudo pacman -U dist/kvault-*.pkg.tar.zst
 ```
 
-That script uses the real AUR `PKGBUILD` with its source repointed at the
+That script uses the release `PKGBUILD` with its source repointed at the
 current commit, so it exercises the same dependency list, build flags and
-`check()` step that AUR users get. It is what CI and the release workflow run.
+`check()` step as the released Arch package. It is what CI and the release
+workflow run.
 
 ## Building
 
@@ -144,7 +150,7 @@ Every other check stays on, and CI treats warnings as failures.
   SDK. The two-factor page says so rather than failing silently.
 - **Captcha-gated logins** cannot be completed here. Logging in once through the
   web vault clears the flag.
-- **Organisations**: items shared with you decrypt and appear in the list, but
+- **Organizations**: items shared with you decrypt and appear in the list, but
   there is no collection browser or sharing UI, and new items are always
   personal.
 - **Master password reprompt** is stored and round-trips to other clients, but
@@ -152,7 +158,7 @@ Every other check stays on, and CI treats warnings as failures.
 - **Attachments** can be downloaded, not added or removed.
 - **The newer "v2" ciphertext format** (XChaCha20-Poly1305 in a COSE envelope,
   EncString type 7) is not implemented. Items arriving in that format are
-  recognised and reported as such rather than misparsed or silently blanked,
+  recognized and reported as such rather than misparsed or silently blanked,
   and every request carries a `Bitwarden-Client-Version` from before that
   rollout so the server keeps serving data this client can read. Override it
   with `KVAULT_CLIENT_VERSION=2026.1.0 kvault` if a server ever rejects the

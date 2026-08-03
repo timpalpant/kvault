@@ -38,15 +38,15 @@ public:
      */
     bool unlockWithMasterKey(const SecureBytes &masterKey, const QString &wrappedUserKey);
 
-    /// Decrypt the account's RSA private key, needed for organisation keys.
+    /// Decrypt the account's RSA private key, needed for organization keys.
     bool loadPrivateKey(const QString &wrappedPrivateKey);
 
-    /// Decrypt the per-organisation keys listed in the sync profile.
+    /// Decrypt the per-organization keys listed in the sync profile.
     void loadOrganizationKeys(const QJsonArray &organizations);
 
     /**
      * The key that protects a given item.
-     * Personal items use the user key; shared items use their organisation key.
+     * Personal items use the user key; shared items use their organization key.
      */
     const SymmetricKey &keyForOrganization(const QString &organizationId) const;
     bool hasKeyForOrganization(const QString &organizationId) const;
