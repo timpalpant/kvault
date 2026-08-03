@@ -81,12 +81,10 @@ modules:
     builddir: true
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
-      - -DBUILD_TESTING=ON
-    post-install:
-      # A broken key schedule must never reach a user, so the offline tests run
-      # as part of packaging. apitest is excluded: it binds a localhost socket,
-      # which is not dependable inside the build sandbox.
-      - ctest --output-on-failure --no-tests=error -E apitest
+      # The native CI and release verification jobs run the complete test
+      # suite. A Flatpak build is an artifact build, so keep test executables
+      # out of the published application and avoid nested-sandbox test issues.
+      - -DBUILD_TESTING=OFF
     sources:
       - type: dir
         path: ../..
