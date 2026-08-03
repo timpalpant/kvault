@@ -1,6 +1,6 @@
 # Maintainer: Tim Palpant <tim@palpant.us>
 pkgname=kvault
-pkgver=0.1.0
+pkgver=0.1.1
 pkgrel=1
 pkgdesc="Unofficial native Kirigami client for Bitwarden servers"
 arch=('x86_64' 'aarch64')

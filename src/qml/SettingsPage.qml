@@ -196,7 +196,7 @@ FormCard.FormCardPage {
 
     FormCard.FormCard {
         FormCard.FormTextDelegate {
-            text: i18n("KVault %1", "0.1.0")
+            text: i18n("KVault %1", "0.1.1")
             description: i18n("An unofficial client for Bitwarden servers. An independent project, "
                 + "not affiliated with or endorsed by Bitwarden, Inc.")
         }

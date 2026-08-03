@@ -4,11 +4,10 @@
 [![Release](https://img.shields.io/github/v/release/timpalpant/kvault?include_prereleases&label=release&logo=github)](https://github.com/timpalpant/kvault/releases)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 
-An unofficial native Kirigami/Qt client for Bitwarden vaults, for people who
-would rather not run an Electron app to look at a password.
+An unofficial native Kirigami/Qt client for Bitwarden vaults.
 
 It speaks the Bitwarden API directly and does all cryptography locally with
-OpenSSL and libargon2. There is no browser engine and no Node runtime.
+OpenSSL and libargon2.
 
 **Website:** <https://timpalpant.github.io/kvault/>
 
@@ -64,8 +63,8 @@ flatpak-builder --user --install --force-clean \
 
 ### Arch Linux
 
-Each release attaches a prebuilt `*.pkg.tar.zst`, if you would rather not
-build locally:
+Download `kvault-*.pkg.tar.zst` from the
+[latest release](https://github.com/timpalpant/kvault/releases), then:
 
 ```sh
 sudo pacman -U kvault-*.pkg.tar.zst

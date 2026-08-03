@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         QQuickStyle::setStyle(u"org.kde.desktop"_s);
     }
 
-    KAboutData about(u"kvault"_s, i18n("KVault"), u"0.1.0"_s, i18n("An unofficial client for Bitwarden servers"), KAboutLicense::GPL_V3);
+    KAboutData about(u"kvault"_s, i18n("KVault"), u"0.1.1"_s, i18n("An unofficial client for Bitwarden servers"), KAboutLicense::GPL_V3);
     about.addAuthor(i18n("Tim Palpant"), {}, u"tim@palpant.us"_s);
     about.setHomepage(u"https://github.com/timpalpant/kvault"_s);
     // KAboutData defaults this to "org.kde." + componentName, and

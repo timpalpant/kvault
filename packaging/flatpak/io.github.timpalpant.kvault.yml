@@ -86,4 +86,4 @@ modules:
       # in the same commit that bumps the version in CMakeLists.txt.
       - type: git
         url: https://github.com/timpalpant/kvault.git
-        tag: v0.1.0
+        tag: v0.1.1
