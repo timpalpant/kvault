@@ -43,7 +43,10 @@ jobs:
 
       - name: Build and test
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_TESTING=ON
           cmake --build build
           ctest --test-dir build --output-on-failure --no-tests=error
 
