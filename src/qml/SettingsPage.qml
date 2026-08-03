@@ -121,7 +121,7 @@ FormCard.FormCardPage {
         FormCard.FormDelegateSeparator {}
 
         FormCard.FormSwitchDelegate {
-            text: i18n("Lock when the window is minimised")
+            text: i18n("Lock when the window is minimized")
             checked: AppSettings.lockOnMinimize
             onToggled: AppSettings.lockOnMinimize = checked
         }

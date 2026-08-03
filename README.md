@@ -38,7 +38,7 @@ OpenSSL and libargon2. There is no browser engine and no Node runtime.
   and searchable without a network connection.
 - **Generator** — passwords with configurable character classes and minimums, or
   passphrases from the EFF long wordlist.
-- **Locking** — automatic lock when idle or on minimise, and clipboard entries
+- **Locking** — automatic lock when idle or on minimize, and clipboard entries
   that clear themselves.
 
 Deliberately not included, per the original brief: Send, import and export.
@@ -83,6 +83,22 @@ That script uses the release `PKGBUILD` with its source repointed at the
 current commit, so it exercises the same dependency list, build flags and
 `check()` step as the released Arch package. It is what CI and the release
 workflow run.
+
+### Debian / Ubuntu
+
+Download `kvault_*.deb` from the [latest release](https://github.com/timpalpant/kvault/releases), then:
+
+```sh
+sudo apt install ./kvault_*.deb
+```
+
+### Fedora / RPM-based distributions
+
+Download `kvault-*.rpm` from the [latest release](https://github.com/timpalpant/kvault/releases), then:
+
+```sh
+sudo dnf install ./kvault-*.rpm
+```
 
 ## Building
 

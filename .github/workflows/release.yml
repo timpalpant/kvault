@@ -1,9 +1,11 @@
 # Cuts a release when a vX.Y.Z tag is pushed.
 #
-# Three artifacts are published, plus a checksum for each:
+# Five artifacts are published, plus a checksum for each:
 #   1. kvault-X.Y.Z.tar.gz         source bundle (pinned by the release PKGBUILD)
 #   2. kvault-X.Y.Z-*.pkg.tar.zst  Arch package, built with the release PKGBUILD
 #   3. kvault.flatpak              single-file Flatpak bundle
+#   4. kvault_*.deb                 Debian package
+#   5. kvault-*.rpm                 RPM package
 #
 # GitHub attaches its own "Source code (zip/tar.gz)" links to every release,
 # but those are generated on demand and are not byte-stable, so they cannot be
@@ -146,6 +148,82 @@ jobs:
             dist/*.pkg.tar.zst.sha256
           if-no-files-found: error
 
+  deb:
+    name: Debian package
+    needs: verify
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Install dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates cmake ninja-build g++ git dpkg-dev file gettext \
+            qt6-base-dev qt6-declarative-dev qt6-svg-dev qt6-tools-dev \
+            libkf6coreaddons-dev libkf6i18n-dev libkf6dbusaddons-dev \
+            libkf6statusnotifieritem-dev libkirigami-dev kirigami-addons-dev \
+            qtkeychain-qt6-dev libssl-dev libargon2-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Build the package
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_TESTING=OFF
+          cmake --build build
+          cpack --config build/CPackConfig.cmake -G DEB -B "$PWD/dist"
+          for package in dist/*.deb; do sha256sum "$package" > "$package.sha256"; done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-package
+          path: |
+            dist/*.deb
+            dist/*.deb.sha256
+          if-no-files-found: error
+
+  rpm:
+    name: RPM package
+    needs: verify
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:latest
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf -y install \
+            cmake ninja-build gcc-c++ git rpm-build gettext \
+            qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtsvg-devel \
+            qt6-qttools-devel \
+            kf6-kcoreaddons-devel kf6-ki18n-devel kf6-kdbusaddons-devel \
+            kf6-kstatusnotifieritem-devel kf6-kirigami-devel \
+            kf6-kirigami-addons-devel qtkeychain-qt6-devel openssl-devel \
+            libargon2-devel
+          dnf clean all
+
+      - uses: actions/checkout@v4
+
+      - name: Build the package
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DBUILD_TESTING=OFF
+          cmake --build build
+          cpack --config build/CPackConfig.cmake -G RPM -B "$PWD/dist"
+          for package in dist/*.rpm; do sha256sum "$package" > "$package.sha256"; done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm-package
+          path: |
+            dist/*.rpm
+            dist/*.rpm.sha256
+          if-no-files-found: error
+
   flatpak:
     name: Flatpak bundle
     needs: verify
@@ -197,7 +275,7 @@ jobs:
 
   publish:
     name: Publish the release
-    needs: [source, archpkg, flatpak]
+    needs: [source, archpkg, deb, rpm, flatpak]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -222,6 +300,18 @@ jobs:
 
             ```sh
             sudo pacman -U kvault-*.pkg.tar.zst
+            ```
+
+            **Debian / Ubuntu** — download the attached `.deb`, then:
+
+            ```sh
+            sudo apt install ./kvault_*.deb
+            ```
+
+            **Fedora / RPM-based** — download the attached `.rpm`, then:
+
+            ```sh
+            sudo dnf install ./kvault-*.rpm
             ```
 
             **Flatpak** — download `kvault.flatpak`, then:

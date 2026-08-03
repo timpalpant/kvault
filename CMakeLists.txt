@@ -186,4 +186,23 @@ install(FILES data/io.github.timpalpant.kvault.metainfo.xml
 install(FILES src/qml/icons/kvault.svg
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps
     RENAME io.github.timpalpant.kvault.svg)
+
+# The CI and release workflows build native DEB and RPM packages from the
+# normal install tree, so keep their metadata next to the install rules.
+set(CPACK_PACKAGE_NAME "kvault")
+set(CPACK_PACKAGE_VENDOR "Timothy Palpant")
+set(CPACK_PACKAGE_CONTACT "Timothy Palpant <tim@palpant.us>")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Native Bitwarden client for KDE Plasma")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_CONTACT}")
+set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS
+    "qml6-module-qtquick, qml6-module-qtquick-controls, qml6-module-qtquick-dialogs, qml6-module-qtquick-layouts, qml6-module-qtquick-shapes, qml6-module-qtquick-window, qml6-module-org-kde-kirigami, qml6-module-org-kde-kirigamiaddons-delegates, qml6-module-org-kde-kirigamiaddons-formcard")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
+set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
+set(CPACK_RPM_PACKAGE_GROUP "Applications/Utility")
+set(CPACK_RPM_PACKAGE_REQUIRES "qt6-qtdeclarative, kf6-kirigami, kf6-kirigami-addons")
+set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
+include(CPack)
 endif()
