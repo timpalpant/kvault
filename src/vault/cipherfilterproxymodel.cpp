@@ -17,17 +17,34 @@ CipherListModel *CipherFilterProxyModel::sourceCipherModel() const
     return qobject_cast<CipherListModel *>(sourceModel());
 }
 
+void CipherFilterProxyModel::beginFilterUpdate()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    beginFilterChange();
+#endif
+}
+
+void CipherFilterProxyModel::endFilterUpdate()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#else
+    // Qt 6.8 and 6.9 do not have endFilterChange().
+    invalidateFilter();
+#endif
+}
+
 void CipherFilterProxyModel::setSearchText(const QString &text)
 {
     if (m_searchText == text) {
         return;
     }
-    beginFilterChange();
+    beginFilterUpdate();
     m_searchText = text;
     // Every whitespace-separated term must match, so "git oct" finds the GitHub
     // login for octocat regardless of field order.
     m_searchTerms = text.toLower().split(QLatin1Char(' '), Qt::SkipEmptyParts);
-    endFilterChange(QSortFilterProxyModel::Direction::Rows);
+    endFilterUpdate();
     Q_EMIT searchTextChanged();
 }
 
@@ -36,9 +53,9 @@ void CipherFilterProxyModel::setScope(Scope scope)
     if (m_scope == scope) {
         return;
     }
-    beginFilterChange();
+    beginFilterUpdate();
     m_scope = scope;
-    endFilterChange(QSortFilterProxyModel::Direction::Rows);
+    endFilterUpdate();
     Q_EMIT scopeChanged();
 }
 
@@ -47,9 +64,9 @@ void CipherFilterProxyModel::setFolderId(const QString &folderId)
     if (m_folderId == folderId) {
         return;
     }
-    beginFilterChange();
+    beginFilterUpdate();
     m_folderId = folderId;
-    endFilterChange(QSortFilterProxyModel::Direction::Rows);
+    endFilterUpdate();
     Q_EMIT folderIdChanged();
 }
 
@@ -58,9 +75,9 @@ void CipherFilterProxyModel::setCipherType(int type)
     if (m_cipherType == type) {
         return;
     }
-    beginFilterChange();
+    beginFilterUpdate();
     m_cipherType = type;
-    endFilterChange(QSortFilterProxyModel::Direction::Rows);
+    endFilterUpdate();
     Q_EMIT cipherTypeChanged();
 }
 

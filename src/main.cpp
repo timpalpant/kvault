@@ -53,9 +53,7 @@ int main(int argc, char *argv[])
     if (!dbusService.isRegistered()) {
         const QDBusConnection sessionBus = QDBusConnection::sessionBus();
         const auto *busInterface = sessionBus.interface();
-        const auto existingService = busInterface
-            ? busInterface->isServiceRegistered(u"io.github.timpalpant.kvault"_s)
-            : QDBusReply<bool>();
+        const auto existingService = busInterface ? busInterface->isServiceRegistered(u"io.github.timpalpant.kvault"_s) : QDBusReply<bool>();
         if (sessionBus.isConnected() && existingService.isValid() && existingService.value()) {
             return 0;
         }
@@ -65,10 +63,9 @@ int main(int argc, char *argv[])
         QIcon::fromTheme(u"io.github.timpalpant.kvault"_s, QIcon(u":/qt/qml/io/github/timpalpant/kvault/src/qml/icons/kvault.svg"_s)));
 
     kvault::TrayController trayController;
-    QObject::connect(&dbusService, &KDBusService::activateRequested, &trayController,
-        [&trayController](const QStringList &, const QString &) {
-            trayController.showMainWindow();
-        });
+    QObject::connect(&dbusService, &KDBusService::activateRequested, &trayController, [&trayController](const QStringList &, const QString &) {
+        trayController.showMainWindow();
+    });
 
     QQmlApplicationEngine engine;
     KLocalization::setupLocalizedContext(&engine);

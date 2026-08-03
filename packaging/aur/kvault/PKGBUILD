@@ -9,9 +9,11 @@ license=('GPL-3.0-or-later')
 depends=(
   'argon2'
   'kcoreaddons'
+  'kdbusaddons'
   'ki18n'
   'kirigami'
   'kirigami-addons'
+  'kstatusnotifieritem'
   'openssl'
   'qqc2-desktop-style'
   'qt6-base'

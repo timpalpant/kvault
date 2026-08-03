@@ -49,5 +49,10 @@ if(KVAULT_BUILD_APP)
     )
     target_include_directories(vaulttest PRIVATE ${CMAKE_SOURCE_DIR}/src)
     add_test(NAME vaulttest COMMAND vaulttest)
-    set_tests_properties(vaulttest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+    # QStandardPaths test mode writes below $HOME/.qttest. Keep that state in
+    # the build tree so the test is isolated from a developer's home and works
+    # in sandboxes that make the real home directory read-only.
+    set(KVAULT_TEST_HOME "${CMAKE_BINARY_DIR}/test-home")
+    file(MAKE_DIRECTORY "${KVAULT_TEST_HOME}")
+    set_tests_properties(vaulttest PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;HOME=${KVAULT_TEST_HOME}")
 endif()

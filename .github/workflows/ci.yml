@@ -23,7 +23,8 @@ jobs:
           pacman -Syu --noconfirm --needed \
             base-devel cmake ninja git \
             qt6-base qt6-declarative qt6-svg \
-            kirigami kirigami-addons ki18n kcoreaddons qqc2-desktop-style \
+            kirigami kirigami-addons ki18n kcoreaddons kdbusaddons \
+            kstatusnotifieritem qqc2-desktop-style \
             qtkeychain-qt6 openssl argon2
 
       - uses: actions/checkout@v4
@@ -85,7 +86,8 @@ jobs:
           pacman -Syu --noconfirm --needed \
             base-devel cmake ninja git \
             qt6-base qt6-declarative qt6-svg qt6-tools \
-            kirigami kirigami-addons ki18n kcoreaddons qqc2-desktop-style \
+            kirigami kirigami-addons ki18n kcoreaddons kdbusaddons \
+            kstatusnotifieritem qqc2-desktop-style \
             qtkeychain-qt6 openssl argon2 \
             appstream desktop-file-utils
 

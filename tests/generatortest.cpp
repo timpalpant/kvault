@@ -207,13 +207,15 @@ void GeneratorTest::testPassphrase()
     PasswordGenerator generator;
     generator.setMode(PasswordGenerator::Passphrase);
     generator.setWordCount(4);
-    generator.setSeparator(QStringLiteral("-"));
+    // The EFF list legitimately contains hyphenated words, so use a delimiter
+    // that cannot be confused with a word boundary when inspecting the output.
+    generator.setSeparator(QStringLiteral("|"));
     generator.setCapitalise(false);
     generator.setIncludeNumber(false);
 
     for (int i = 0; i < 20; ++i) {
         generator.regenerate();
-        const QStringList words = generator.value().split(QLatin1Char('-'));
+        const QStringList words = generator.value().split(QLatin1Char('|'));
         QCOMPARE(words.size(), 4);
         for (const QString &word : words) {
             QVERIFY2(!word.isEmpty(), qPrintable(generator.value()));

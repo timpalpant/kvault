@@ -38,6 +38,8 @@ public:
     }
 
     QString url() const { return QStringLiteral("http://127.0.0.1:%1").arg(m_server.serverPort()); }
+    bool isListening() const { return m_server.isListening(); }
+    QString errorString() const { return m_server.errorString(); }
 
     /// Body returned for the next request.
     QByteArray responseBody = QByteArrayLiteral("{}");
@@ -116,6 +118,9 @@ private Q_SLOTS:
 void ApiTest::testPreloginSendsRequiredHeaders()
 {
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseBody = QByteArrayLiteral(R"({"kdf":0,"kdfIterations":600000})");
 
     ApiClient client;
@@ -152,6 +157,9 @@ void ApiTest::testTokenRequestSendsRequiredHeaders()
     // The token exchange builds its own request, so it is the path most likely
     // to drift out of sync with the others. This is where the missing header bit.
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseStatus = 400;
     server.responseBody = QByteArrayLiteral(R"({"error":"invalid_grant"})");
 
@@ -176,10 +184,13 @@ void ApiTest::testTokenRequestSendsRequiredHeaders()
 
 void ApiTest::testClientVersionCanBeOverridden()
 {
-    qputenv("KVAULT_CLIENT_VERSION", "2099.1.2");
-
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseBody = QByteArrayLiteral(R"({"kdf":0,"kdfIterations":600000})");
+
+    qputenv("KVAULT_CLIENT_VERSION", "2099.1.2");
 
     ApiClient client;
     client.setServerUrl(server.url());
@@ -202,6 +213,9 @@ void ApiTest::testFormBodyEncodesBase64Safely()
     // '+' in a form body decodes as a space, which would corrupt every master
     // password hash containing one.
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseStatus = 400;
     server.responseBody = QByteArrayLiteral("{}");
 
@@ -225,6 +239,9 @@ void ApiTest::testNewDeviceVerificationIsDetected()
     // The server reports this only as prose in error_description/ErrorModel,
     // so text matching is the contract it actually offers.
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseStatus = 400;
     server.responseBody = QByteArrayLiteral(R"({"error":"invalid_grant","error_description":"New device verification required.",)"
                                             R"("ErrorModel":{"Message":"new device verification required"}})");
@@ -250,6 +267,9 @@ void ApiTest::testNewDeviceVerificationIsDetected()
 void ApiTest::testNewDeviceOtpIsSent()
 {
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseStatus = 400;
     server.responseBody = QByteArrayLiteral("{}");
 
@@ -269,6 +289,9 @@ void ApiTest::testNewDeviceOtpIsSent()
     // Without a code the field must be absent rather than sent empty, which
     // is what makes the server email a fresh one.
     RecordingServer bare;
+    if (!bare.isListening()) {
+        QSKIP(qPrintable(bare.errorString()));
+    }
     bare.responseStatus = 400;
     ApiClient other;
     other.setServerUrl(bare.url());
@@ -284,6 +307,9 @@ void ApiTest::testClientTooOldIsDetected()
     // Only sent for accounts on V2 encryption, which KVault cannot read; the
     // user needs to be told that, not "wrong password".
     RecordingServer server;
+    if (!server.isListening()) {
+        QSKIP(qPrintable(server.errorString()));
+    }
     server.responseStatus = 400;
     server.responseBody = QByteArrayLiteral(R"({"error":"invalid_grant","error_description":"Please update your app to continue using Bitwarden"})");
 

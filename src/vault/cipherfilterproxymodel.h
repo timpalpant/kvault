@@ -58,6 +58,8 @@ protected:
 
 private:
     CipherListModel *sourceCipherModel() const;
+    void beginFilterUpdate();
+    void endFilterUpdate();
 
     QString m_searchText;
     QStringList m_searchTerms;
