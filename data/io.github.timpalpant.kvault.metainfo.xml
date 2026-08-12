@@ -100,6 +100,13 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.1.2" date="2026-08-12">
+      <description>
+        <p>Fix the Fedora package missing the "org.kde.desktop" QQC2 style
+        module and the Debian package missing the SVG imageformats plugin,
+        either of which made the app fail to start.</p>
+      </description>
+    </release>
     <release version="0.1.1" date="2026-08-03">
       <description>
         <p>Add native Debian and RPM release packages.</p>

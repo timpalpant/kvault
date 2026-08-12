@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(kvault VERSION 0.1.1 DESCRIPTION "Native Kirigami client for Bitwarden" LANGUAGES CXX)
+project(kvault VERSION 0.1.2 DESCRIPTION "Native Kirigami client for Bitwarden" LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -196,13 +196,43 @@ set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Native Bitwarden client for KDE Plasma")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "${CPACK_PACKAGE_CONTACT}")
 set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+# qml6-module-org-kde-desktop (the "org.kde.desktop" QQC2 style main.cpp
+# always selects) is deliberately NOT listed here: on Debian it is already a
+# hard transitive Depends of qml6-module-org-kde-kirigamiaddons-delegates (via
+# -treeview), confirmed by installing this .deb in a bare debian:trixie
+# container with `apt-get install --no-install-recommends` and stracing the
+# launch -- org/kde/desktop/qmldir resolved without it ever being declared
+# here. Do not remove qml6-module-org-kde-kirigamiaddons-delegates without
+# re-checking this.
+#
+# qt6-svg-plugins is the QImageReader plugin LoginPage.qml's SVG logo
+# (src/qml/icons/kvault.svg, shown on every launch) needs to decode -- it is
+# only a Recommends of libqt6gui6, not a hard Depends, so `apt-get install
+# --no-install-recommends` (the flag CI's own dependency steps use, and what
+# minimal/server images set by default) leaves it out; confirmed by stracing
+# a launch in that state and finding libqsvg.so absent from the imageformats
+# plugin directory entirely.
 set(CPACK_DEBIAN_PACKAGE_DEPENDS
-    "qml6-module-qtquick, qml6-module-qtquick-controls, qml6-module-qtquick-dialogs, qml6-module-qtquick-layouts, qml6-module-qtquick-shapes, qml6-module-qtquick-window, qml6-module-org-kde-kirigami, qml6-module-org-kde-kirigamiaddons-delegates, qml6-module-org-kde-kirigamiaddons-formcard")
+    "qml6-module-qtquick, qml6-module-qtquick-controls, qml6-module-qtquick-dialogs, qml6-module-qtquick-layouts, qml6-module-qtquick-shapes, qml6-module-qtquick-window, qml6-module-org-kde-kirigami, qml6-module-org-kde-kirigamiaddons-delegates, qml6-module-org-kde-kirigamiaddons-formcard, qt6-svg-plugins")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 set(CPACK_RPM_PACKAGE_LICENSE "GPL-3.0-or-later")
 set(CPACK_RPM_PACKAGE_GROUP "Applications/Utility")
-set(CPACK_RPM_PACKAGE_REQUIRES "qt6-qtdeclarative, kf6-kirigami, kf6-kirigami-addons")
+# kf6-qqc2-desktop-style is the Fedora name for the "org.kde.desktop" QQC2
+# style main.cpp always selects -- unlike on Debian, nothing kvault depends on
+# pulls it in transitively here, so without it QQuickStyle::setStyle() cannot
+# find the style directory at all and the QML engine aborts before showing a
+# window (exit -1, no console output); confirmed by installing this .rpm in a
+# bare Fedora container and stracing the launch: statx() on
+# qt6/qml/org/kde/desktop returned ENOENT and the process exited via
+# QCoreApplication::exit(-1).
+#
+# qt6-qtsvg is NOT listed here: kvault links Qt6::Svg directly (unlike an app
+# that only reaches SVG through the QML image plugin), so RPM's automatic
+# Requires scanning already adds it for libQt6Svg.so.6, and that package
+# bundles the imageformats SVG decoder plugin itself -- confirmed installed
+# and resolving via strace without adding anything here.
+set(CPACK_RPM_PACKAGE_REQUIRES "qt6-qtdeclarative, kf6-kirigami, kf6-kirigami-addons, kf6-qqc2-desktop-style")
 set(CPACK_RPM_FILE_NAME RPM-DEFAULT)
 include(CPack)
 endif()

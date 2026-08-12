@@ -1,6 +1,6 @@
 # Maintainer: Tim Palpant <tim@palpant.us>
 pkgname=kvault
-pkgver=0.1.1
+pkgver=0.1.2
 pkgrel=1
 pkgdesc="Unofficial native Kirigami client for Bitwarden servers"
 arch=('x86_64' 'aarch64')
@@ -32,7 +32,7 @@ source=("$pkgname-$pkgver.tar.gz::$url/releases/download/v$pkgver/$pkgname-$pkgv
 # from kvault-$pkgver.tar.gz.sha256 in the release; the release workflow prints
 # the line to paste. An unreplaced placeholder fails the build, which is the
 # point -- a wrong hash must stop the build, not be waved through.
-sha256sums=('5e7e96db4ced83eade1287a45ffd9951065e07decdbbc99f4370b3106b911e4a')
+sha256sums=('REPLACE_WITH_RELEASE_SHA256')
 
 build() {
   cmake -S "$pkgname-$pkgver" -B build -G Ninja \
