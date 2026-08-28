@@ -100,6 +100,11 @@
   <content_rating type="oars-1.1"/>
 
   <releases>
+    <release version="0.1.3" date="2026-08-28">
+      <description>
+        <p>Add native aarch64 builds for Arch, Debian, RPM, and Flatpak packages.</p>
+      </description>
+    </release>
     <release version="0.1.2" date="2026-08-12">
       <description>
         <p>Fix the Fedora package missing the "org.kde.desktop" QQC2 style

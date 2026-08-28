@@ -123,9 +123,17 @@ jobs:
           if-no-files-found: error
 
   archpkg:
-    name: Arch package
+    name: Arch package (${{ matrix.arch }})
     needs: verify
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container: archlinux:latest
     steps:
       - name: Install dependencies
@@ -142,16 +150,24 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: arch-package
+          name: arch-package-${{ matrix.arch }}
           path: |
             dist/*.pkg.tar.zst
             dist/*.pkg.tar.zst.sha256
           if-no-files-found: error
 
   deb:
-    name: Debian package
+    name: Debian package (${{ matrix.arch }})
     needs: verify
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container: debian:trixie
     steps:
       - name: Install dependencies
@@ -180,16 +196,24 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: deb-package
+          name: deb-package-${{ matrix.arch }}
           path: |
             dist/*.deb
             dist/*.deb.sha256
           if-no-files-found: error
 
   rpm:
-    name: RPM package
+    name: RPM package (${{ matrix.arch }})
     needs: verify
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container: registry.fedoraproject.org/fedora:latest
     steps:
       - name: Install dependencies
@@ -218,16 +242,24 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: rpm-package
+          name: rpm-package-${{ matrix.arch }}
           path: |
             dist/*.rpm
             dist/*.rpm.sha256
           if-no-files-found: error
 
   flatpak:
-    name: Flatpak bundle
+    name: Flatpak bundle (${{ matrix.arch }})
     needs: verify
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-latest
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v7
 
@@ -261,16 +293,16 @@ jobs:
             echo "Flatpak build attempt $attempt failed; retrying in 15 seconds."
             sleep 15
           done
-          flatpak build-bundle flatpak-repo kvault.flatpak \
+          flatpak build-bundle flatpak-repo kvault-${{ matrix.arch }}.flatpak \
             io.github.timpalpant.kvault
-          sha256sum kvault.flatpak > kvault.flatpak.sha256
+          sha256sum kvault-${{ matrix.arch }}.flatpak > kvault-${{ matrix.arch }}.flatpak.sha256
 
       - uses: actions/upload-artifact@v7
         with:
-          name: flatpak-bundle
+          name: flatpak-bundle-${{ matrix.arch }}
           path: |
-            kvault.flatpak
-            kvault.flatpak.sha256
+            kvault-${{ matrix.arch }}.flatpak
+            kvault-${{ matrix.arch }}.flatpak.sha256
           if-no-files-found: error
 
   publish:
@@ -296,6 +328,10 @@ jobs:
           body: |
             ### Install
 
+            Native packages are available for both x86_64/amd64 and
+            aarch64/arm64. Download the asset matching your machine before
+            using the commands below.
+
             **Arch Linux** — install the attached package directly:
 
             ```sh
@@ -314,10 +350,10 @@ jobs:
             sudo dnf install ./kvault-*.rpm
             ```
 
-            **Flatpak** — download `kvault.flatpak`, then:
+            **Flatpak** — download the matching `kvault-<architecture>.flatpak`, then:
 
             ```sh
-            flatpak install --user kvault.flatpak
+            flatpak install --user kvault-<architecture>.flatpak
             flatpak run io.github.timpalpant.kvault
             ```
 
