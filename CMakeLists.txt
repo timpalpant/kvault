@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(kvault VERSION 0.1.2 DESCRIPTION "Native Kirigami client for Bitwarden" LANGUAGES CXX)
+project(kvault VERSION 0.1.3 DESCRIPTION "Native Kirigami client for Bitwarden" LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
